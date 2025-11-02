@@ -1,0 +1,6 @@
+[main]
+input: nulbnd-terrain.scx
+output: nulbnd.scx
+
+[eudTurbo]
+[main.eps]

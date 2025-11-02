@@ -1,0 +1,90 @@
+object Square {
+  var x, y;
+  var unit: TrgUnit;
+  function constructor (x: EUDVariable, y: EUDVariable, unit: TrgUnit) {
+    this.x = x;
+    this.y = y;
+    this.unit = unit;
+  }
+};
+
+object Step {
+  var squares: EUDArray;
+  var numSquares, wait;
+  function constructor (squares: EUDArray, num: EUDVariable, wait: EUDVariable) {
+    this.squares = squares;
+    this.numSquares = num;
+    this.wait = wait;
+  }
+};
+
+object Obstacle {
+  var terrainX: EUDArray;
+  var terrainY: EUDArray;
+  var steps: EUDArray;
+  var numSteps, numTerrain;
+  function constructor (terrainX: EUDArray, terrainY: EUDArray, numTerrain: EUDArray,
+      steps: EUDArray, num: EUDVariable) {
+    this.terrainX = terrainX;
+    this.terrainY = terrainY;
+    this.steps = steps;
+    this.numSteps = num;
+    this.numTerrain = numTerrain;
+  }
+};
+
+const obData = [
+  Obstacle(
+    // Parallel array for terrain square locations. X, then Y, then array length
+    [0, 2, 4, 6, 6, 6, 8, 10, 12],
+    [2, 2, 2, 0, 2, 4, 2,  2,  2], 9, [
+      Step([
+        Square(2, 2, "Terran Wraith"),
+        Square(10, 2, "Terran Wraith"),
+      ], 2, 16),
+      Step([
+        Square(0, 2, "Terran Wraith"),
+        Square(4, 2, "Terran Wraith"),
+        Square(8, 2, "Terran Wraith"),
+        Square(12, 2, "Terran Wraith"),
+      ], 4, 16),
+      Step([
+        Square(2, 2, "Flag"),
+        Square(10, 2, "Flag"),
+        Square(2, 2, "Terran Wraith"),
+        Square(10, 2, "Terran Wraith"),
+      ], 4, 16),
+      Step([
+        Square(2, 2, "Flag"),
+        Square(10, 2, "Flag"),
+        Square(4, 2, "Terran Wraith"),
+        Square(6, 2, "Terran Wraith"),
+        Square(8, 2, "Terran Wraith"),
+        Square(6, 4, "Terran Wraith"),
+      ], 6, 16),
+      Step([
+        Square(2, 2, "Flag"),
+        Square(10, 2, "Flag"),
+        Square(6, 0, "Terran Wraith"),
+        Square(4, 2, "Terran Wraith"),
+        Square(6, 2, "Terran Wraith"),
+        Square(6, 4, "Terran Wraith"),
+      ], 6, 16),
+      Step([
+        Square(2, 2, "Flag"),
+        Square(10, 2, "Flag"),
+        Square(6, 0, "Terran Wraith"),
+        Square(4, 2, "Terran Wraith"),
+        Square(6, 2, "Terran Wraith"),
+        Square(8, 2, "Terran Wraith"),
+      ], 6, 16),
+      Step([
+        Square(2, 2, "Flag"),
+        Square(10, 2, "Flag"),
+        Square(6, 0, "Terran Wraith"),
+        Square(6, 2, "Terran Wraith"),
+        Square(8, 2, "Terran Wraith"),
+        Square(6, 4, "Terran Wraith"),
+      ], 6, 20),
+  ], 7),
+];

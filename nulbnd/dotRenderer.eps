@@ -1,0 +1,25 @@
+const drawLoc = ($L("Draw"));
+const drawLocOriginX, drawLocOriginY = getlocTL(drawLoc);
+
+object DotRenderer {
+  function drawDot(x: EUDVariable, y: EUDVariable) {
+    setloc(drawLoc, drawLocOriginX + x, drawLocOriginY + y);
+    CreateUnit(1, "Scanner Sweep", $L("Draw"), CurrentPlayer);
+  }
+
+  function drawSquare(gridX: EUDVariable, gridY: EUDVariable, width: EUDVariable, height: EUDVariable) {
+    for (var i = 0; i < width; i += 16) { this.drawDot(gridX*32 + i, gridY*32); }
+    for (var i = 0; i < height; i += 16) { this.drawDot(gridX*32 + width, gridY*32 + i); }
+    for (var i = 0; i < width; i += 16) { this.drawDot(gridX*32 + width - i, gridY*32 + height); }
+    for (var i = 0; i < height; i += 16) { this.drawDot(gridX*32, gridY*32 + height - i); }
+  }
+
+  function drawCross(gridX: EUDVariable, gridY: EUDVariable) {
+    for (var i = 8; i < 64; i += 8) { this.drawDot(gridX*32 + i, gridY*32 + i); }
+    for (var i = 8; i < 64; i += 8) { this.drawDot(gridX*32 + i, gridY*32 + 64 - i); }
+  }
+
+  function clearBuffer() {
+    RemoveUnit("Scanner Sweep", CurrentPlayer);
+  }
+};

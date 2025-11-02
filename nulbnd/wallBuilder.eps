@@ -1,0 +1,74 @@
+const wallLoc = ($L("Wall"));
+const wallLocOriginX, wallLocOriginY = getlocTL(wallLoc);
+
+object WallBuilder {
+  function constructor() {
+    TrgUnit("Terran Nuclear Silo").baseProperty.Building = false;   // Make it spawnable on null
+    TrgUnit("Terran Nuclear Silo").baseProperty.Addon = false;
+    TrgUnit("Terran Nuclear Silo").baseProperty.PermanentCloak = true;
+    TrgUnit("Terran Nuclear Silo").unitBoundsL = 32;
+    TrgUnit("Terran Nuclear Silo").unitBoundsR = 31;
+    TrgUnit("Terran Nuclear Silo").unitBoundsT = 32;
+    TrgUnit("Terran Nuclear Silo").unitBoundsB = 31;
+    Image("Nuclear Silo").isClickable = false;
+    Image("Nuclear Silo").drawIfCloaked = false;
+    TrgUnit("Psi Emitter").baseProperty.PermanentCloak = true;
+    TrgUnit("Psi Emitter").unitBoundsL = 16;
+    TrgUnit("Psi Emitter").unitBoundsR = 15;
+    TrgUnit("Psi Emitter").unitBoundsT = 16;
+    TrgUnit("Psi Emitter").unitBoundsB = 15;
+    Image("Psi Emitter").isClickable = false;
+    Image("Psi Emitter").drawIfCloaked = false;
+    TrgUnit("Terran Machine Shop").baseProperty.Building = false;   // Make it spawnable on null
+    TrgUnit("Terran Machine Shop").baseProperty.Addon = false;
+    TrgUnit("Terran Machine Shop").baseProperty.PermanentCloak = true;
+    TrgUnit("Terran Machine Shop").unitBoundsL = 32;
+    TrgUnit("Terran Machine Shop").unitBoundsR = 31;
+    TrgUnit("Terran Machine Shop").unitBoundsT = 32;
+    TrgUnit("Terran Machine Shop").unitBoundsB = 31;
+    Image("Machine Shop").isClickable = false;
+    Image("Machine Shop").drawIfCloaked = false;
+  }
+
+  function buildBorder() {
+    for (var i = 0; i < 26; i += 2) { this.buildBorderWall(i, 0); }
+    for (var i = 0; i < 8; i += 2) { this.buildBorderWall(26, i); }
+    for (var i = 0; i < 26; i += 2) { this.buildBorderWall(26 - i, 8); }
+    for (var i = 0; i < 8; i += 2) { this.buildBorderWall(0, 8 - i); }
+  }
+
+  function moveLoc(gridX: EUDVariable, gridY: EUDVariable, size: EUDVariable) {
+    setloc(wallLoc, wallLocOriginX + gridX*32, wallLocOriginY + gridY*32, wallLocOriginX + size + gridX*32, wallLocOriginY + size + gridY*32);
+  }
+
+  function buildBorderWall(gridX: EUDVariable, gridY: EUDVariable) {
+    this.moveLoc(gridX, gridY, 64);
+    CreateUnitWithProperties(1, "Terran Nuclear Silo", wallLoc, CurrentPlayer, UnitProperty(invincible = true));
+  }
+
+  function buildObWalls() {
+    for (var i = 0; i < 14; i++) {
+      for (var j = 0; j < 6; j++) {
+        this.moveLoc(i + 6, j + 2, 32);
+        CreateUnitWithProperties(1, "Psi Emitter", wallLoc, CurrentPlayer, UnitProperty(invincible = true));
+      }
+    }
+  }
+
+  function clearObWalls(gridX: EUDVariable, gridY: EUDVariable) {
+    this.moveLoc(gridX, gridY, 32);
+    RemoveUnitAt(All, "Psi Emitter", wallLoc, CurrentPlayer);
+  }
+
+  // function simplifyObWalls() {
+  //   for (var i = 0; i < 14; i += 2) {
+  //     for (var j = 0; j < 6; j += 2) {
+  //       this.moveLoc(i + 6, j + 2, 64);
+  //       if (Bring(CurrentPlayer, Exactly, 4, "Psi Emitter", wallLoc)) {
+  //         RemoveUnitAt(All, "Psi Emitter", wallLoc, CurrentPlayer);
+  //         CreateUnitWithProperties(1, "Terran Machine Shop", wallLoc, CurrentPlayer, UnitProperty(invincible = true));
+  //       }
+  //     }
+  //   }
+  // }
+};

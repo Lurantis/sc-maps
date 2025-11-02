@@ -1,0 +1,78 @@
+import obManager.ObManager;
+import obData.obData;
+
+const introTimer = EUDLightVariable(50);
+const cpuPlayer = P8;
+const obManager = ObManager();
+
+function onPluginStart() { // This function will be executed once when the game starts
+  setcurpl(cpuPlayer);
+  TrgUnit("Scanner Sweep").availabilityFlags.UnitListing = true;  // Scanner sweep spawnable
+  Image("Explosion2 (Small)").drawingFunction = "WarpFlash";
+}
+
+function initBound() {
+  // Set death count leaderboard
+  LeaderBoardScore(Custom, "Misses");
+  LeaderBoardComputerPlayers(Disable);
+  
+  // CPU Ally to players
+  SetAllianceStatus(Force1, Ally);
+
+  foreach (p: EUDLoopPlayer()) {
+    setcurpl(p);
+    MuteUnitSpeech();
+    MinimapPing("Start");
+    // CenterView($L("Start"));
+    CreateUnitWithProperties(1, "Zerg Zergling", $L("Start"), p, UnitProperty(invincible = true));
+  }
+}
+
+function beforeTriggerExec() { // This function will be executed once each frame before classical triggers
+  const cp = getcurpl();
+
+  once (introTimer.Exactly(0)) {
+    initBound();
+    setcurpl(cp);
+    obManager.start();
+  }
+
+  foreach(p: EUDLoopPlayer()) {
+    setcurpl(p);
+    SetAllianceStatus(cpuPlayer, Ally);
+  }
+  setcurpl(cp);
+
+  // Advance timers
+  DoActions(introTimer.SubtractNumber(1));
+  obManager.tickTimer();
+
+  if (obManager.level > 0) {
+    foreach (p: EUDLoopPlayer()) {
+      setcurpl(p);
+
+      // Revive
+      if (Command(p, Exactly, 0, "Zerg Zergling")) {
+        MinimapPing($L("Start"));
+        SetScore(p, Add, 1, Custom);
+        CreateUnitWithProperties(1, "Zerg Zergling", $L("Start"), p, UnitProperty(invincible = true));
+      }
+    }
+    setcurpl(cp);
+
+    // Advance level
+    if (Bring(Force1, AtLeast, 1, "Zerg Zergling", $L("Finish"))) {
+      if (obManager.level < obData.length) {
+        obManager.level++;
+        MoveUnit(All, "Zerg Zergling", Force1, $L("Anywhere"), $L("Start"));
+        MinimapPingAll($L("Start"));
+      }
+    }
+  }
+
+  obManager.processOb();
+}
+
+function afterTriggerExec() { // This function will be executed once per frame after classical triggers
+
+}

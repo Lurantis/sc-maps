@@ -1,0 +1,138 @@
+import dotRenderer.DotRenderer;
+import wallBuilder.WallBuilder;
+import obData;
+
+const explodeLoc = ($L("Ob"));
+const explodeLocOriginX, explodeLocOriginY = getlocTL(explodeLoc);
+
+object ObManager {
+  var level, drawTimer, stepTimer, step, numKillzones;
+  var renderer: DotRenderer;
+  var builder: WallBuilder;
+  
+  var killzoneX: EUDArray;
+  var killzoneY: EUDArray;
+
+  function constructor() {
+    this.renderer = DotRenderer();
+    this.builder = WallBuilder();
+    this.level = 0;
+    this.drawTimer = 0;
+    this.stepTimer = 0;
+    this.step = 0;
+    this.killzoneX = EUDArray(10);
+    this.killzoneY = EUDArray(10);
+    this.numKillzones = 0;
+  }
+
+  function moveKillLoc(gridX: EUDVariable, gridY: EUDVariable) {
+    setloc(explodeLoc, explodeLocOriginX + gridX*32, explodeLocOriginY + gridY*32, explodeLocOriginX + 64 + gridX*32, explodeLocOriginY + 64 + gridY*32);
+  }
+
+  function killBounders() {
+    RemoveUnitAt(All, "(any unit)", explodeLoc, Force1);
+  }
+
+  function explodeUnit(unit: TrgUnit, gridX: EUDVariable, gridY: EUDVariable) {
+    this.moveKillLoc(gridX, gridY);
+    CreateUnitWithProperties(1, unit, explodeLoc, CurrentPlayer, UnitProperty(invincible = true));
+    KillUnitAt(All, unit, explodeLoc, CurrentPlayer);
+    this.killBounders();
+  }
+
+  function killzone(gridX: EUDVariable, gridY: EUDVariable) {
+    this.moveKillLoc(gridX, gridY);
+    this.killBounders();
+  }
+
+  function buildObWalls() {
+    RemoveUnit("Psi Emitter", CurrentPlayer);
+    this.builder.buildObWalls();
+    const obs = EUDArray.cast(obData.obData);
+    const ob = obData.Obstacle.cast(obs[this.level - 1]);
+    const terrainX = EUDArray.cast(ob.terrainX);
+    const terrainY = EUDArray.cast(ob.terrainY);
+    for (var i = 0; i < ob.numTerrain; i++) {
+      const gridX = terrainX[i];
+      const gridY = terrainY[i];
+      this.builder.clearObWalls(gridX + 6, gridY + 2);
+    }
+    // this.builder.simplifyObWalls();
+  }
+
+  function start() {
+    this.builder.buildBorder();
+    this.level = 1;
+    this.buildObWalls();
+  }
+
+  function processOb() {
+    if (this.level > 0) {
+      const obs = EUDArray.cast(obData.obData);
+      const ob = obData.Obstacle.cast(obs[this.level - 1]);
+      const steps = EUDArray.cast(ob.steps);
+      const step = obData.Step.cast(steps[this.step]);
+      const squares = EUDArray.cast(step.squares);
+
+      if (this.stepTimer == 0) {
+        this.numKillzones = 0;
+        for (var i = 0; i < step.numSquares; i++) {
+          const square = obData.Square.cast(squares[i]);
+          // Flags don't explode; they represent placement of a persistent killzone for that step
+          if (square.unit == $U("Flag")) {
+            this.killzoneX[this.numKillzones] = square.x;
+            this.killzoneY[this.numKillzones] = square.y;
+            this.numKillzones++;
+          } else {
+            this.explodeUnit(square.unit, square.x, square.y);
+          }
+        }
+
+        this.stepTimer = step.wait;
+        this.step = (this.step + 1) % ob.numSteps;
+      }
+
+      if (this.numKillzones > 0) {
+        for (var i = 0; i < this.numKillzones; i++) {
+          const gridX = this.killzoneX[i];
+          const gridY = this.killzoneY[i];
+          this.killzone(gridX, gridY);
+        }
+      }
+
+      if (this.drawTimer == 0) {
+        Sprite("Scanner Sweep Hit").image = "Nuke Target Dot";
+        Image("Nuke Target Dot").drawingFunction = "WarpFlash";                 // Images.dat White Nuke Dot
+        Image("Nuke Target Dot").iscript = "Siege Tank (Tank) Turret Overlay";  // Images.dat Nuke Dot 2-frame stationary iscript (250)
+
+        this.renderer.drawSquare(0, 0, 128, 192); // draw start area
+        this.renderer.drawSquare(18, 0, 128, 192); // draw end area
+
+        const terrainX = EUDArray.cast(ob.terrainX);
+        const terrainY = EUDArray.cast(ob.terrainY);
+        for (var i = 0; i < ob.numTerrain; i++) {
+          const gridX = terrainX[i];
+          const gridY = terrainY[i];
+          this.renderer.drawSquare(gridX + 4, gridY, 64, 64);
+        }
+
+        if (this.numKillzones > 0) {
+          for (var i = 0; i < this.numKillzones; i++) {
+            Image("Nuke Target Dot").drawingFunction = "Normal"; // Images.dat Red Nuke Dot
+            Image("Nuke Target Dot").iscript = "Glave Wurm Trail";  // Images.dat Nuke Dot 4-frame motion iscript (269)
+            const gridX = this.killzoneX[i];
+            const gridY = this.killzoneY[i];
+            this.renderer.drawCross(gridX + 4, gridY);
+          }
+        }
+
+        this.renderer.clearBuffer();
+      }
+    }
+  }
+
+  function tickTimer() {
+    this.drawTimer = (this.drawTimer + 1) % 2;
+    if (this.stepTimer > 0) { this.stepTimer--; }
+  }
+};
