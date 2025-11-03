@@ -2,5 +2,8 @@
 input: nulbnd-terrain.scx
 output: nulbnd.scx
 
+[bgmplayer]
+path: res/NULCTRL.ogg
+length: 124.80
 [eudTurbo]
 [main.eps]
