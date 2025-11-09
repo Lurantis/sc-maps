@@ -1,8 +1,9 @@
+import introPlayer;
 import obManager.ObManager;
 import obData.obData;
 
-const introTimer = EUDLightVariable(50);
 const cpuPlayer = P8;
+const intro = introPlayer.IntroPlayer();
 const obManager = ObManager();
 
 function onPluginStart() { // This function will be executed once when the game starts
@@ -31,7 +32,9 @@ function initBound() {
 function beforeTriggerExec() { // This function will be executed once each frame before classical triggers
   const cp = getcurpl();
 
-  once (introTimer.Exactly(0)) {
+  intro.play();
+
+  once (introPlayer.introFinished.IsSet()) {
     initBound();
     setcurpl(cp);
     obManager.start();
@@ -44,7 +47,6 @@ function beforeTriggerExec() { // This function will be executed once each frame
   setcurpl(cp);
 
   // Advance timers
-  DoActions(introTimer.SubtractNumber(1));
   obManager.tickTimer();
 
   if (obManager.level > 0) {

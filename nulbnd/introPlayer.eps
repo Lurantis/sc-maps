@@ -1,0 +1,113 @@
+const introFinished = EUDLightBool();
+
+object IntroPlayer {
+  var bpm, offset, startTime, beat, division;
+  function constructor() {
+    this.bpm = 100;
+    this.offset = 300;
+    this.startTime = this.time();
+  }
+
+  function time(): EUDVariable {
+    return -dwread_epd(EPD(0x0051CE8C));
+  }
+
+  function clearText() {
+    for (var i = 0; i <= 10; i++) {
+      DisplayTextAllAt(i, " ");
+    }
+  }
+
+  function play() {
+    const msElapsed = this.time() - this.startTime + this.offset;
+    this.beat = msElapsed / (60 * 1000 / this.bpm);
+    this.division = (msElapsed * 4 / (60 * 1000 / this.bpm)) % 4;
+
+    once (this.beat >= 1 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04\"NULBND\""); }
+    once (this.beat >= 5 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04\"NULBND\""); }
+    once (this.beat >= 9 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04\"NULBND\""); }
+    once (this.beat >= 13 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04\"NULBND\""); }
+    once (this.beat >= 13 && this.division >= 0) { DisplayTextAllAt(6, "\x13\x05(Null Bound)"); }
+    once (this.beat >= 14 && this.division >= 2) { this.clearText(); }
+    once (this.beat >= 15 && this.division >= 0) { DisplayTextAllAt(2, "                                    \x13\x04!!  !!"); }
+    once (this.beat >= 15 && this.division >= 2) { DisplayTextAllAt(2, "                                    \x13\x04!!  !!"); }
+    once (this.beat >= 15 && this.division >= 2) { DisplayTextAllAt(3, "                                 \x13\x04!!"); }
+    once (this.beat >= 15 && this.division >= 3) { DisplayTextAllAt(4, "                                 \x13\x04!!"); }
+    once (this.beat >= 16 && this.division >= 0) { DisplayTextAllAt(5, "                                 \x13\x04!!"); }
+    once (this.beat >= 16 && this.division >= 1) { DisplayTextAllAt(6, "                                 \x13\x04!!"); }
+    once (this.beat >= 16 && this.division >= 2) { DisplayTextAllAt(7, "                                 \x13\x04!!"); }
+    once (this.beat >= 16 && this.division >= 3) { DisplayTextAllAt(8, "                                 \x13\x04!!"); }
+    once (this.beat >= 17 && this.division >= 0) { this.clearText(); }
+    once (this.beat >= 17 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04DON'T"); }
+    once (this.beat >= 17 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04STOP"); }
+    once (this.beat >= 18 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04TO THE"); }
+    once (this.beat >= 18 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04CLUB"); }
+    once (this.beat >= 19 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04GO"); }
+    once (this.beat >= 20 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04CLUB"); }
+    once (this.beat >= 20 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04TO THE"); }
+    once (this.beat >= 21 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04CLUB"); }
+    once (this.beat >= 22 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04GHOST"); }
+    once (this.beat >= 22 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04TO THE"); }
+    once (this.beat >= 23 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04CLUB"); }
+    once (this.beat >= 23 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04GHOST"); }
+    once (this.beat >= 24 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04TO THE"); }
+    once (this.beat >= 24 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04GO"); }
+    once (this.beat >= 25 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04DON'T"); }
+    once (this.beat >= 25 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04STOP"); }
+    once (this.beat >= 26 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04TO THE"); }
+    once (this.beat >= 26 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04CLUB"); }
+    once (this.beat >= 27 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04GO"); }
+    once (this.beat >= 28 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04CLUB"); }
+    once (this.beat >= 28 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04TO THE"); }
+    once (this.beat >= 29 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04CLUB"); }
+    once (this.beat >= 30 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04GHOST"); }
+    once (this.beat >= 30 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04TO THE"); }
+    once (this.beat >= 31 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x04CLUB"); }
+    once (this.beat >= 31 && this.division >= 2) { DisplayTextAllAt(5, "\x13\x04GO"); }
+    once (this.beat >= 32 && this.division >= 0) { DisplayTextAllAt(5, "\x13\x08SILENT"); }
+    once (this.beat >= 33 && this.division >= 0) { this.clearText(); }
+    once (this.beat >= 33 && this.division >= 2) { DisplayTextAllAt(3, "          \x04DON'T"); }
+    once (this.beat >= 34 && this.division >= 0) { DisplayTextAllAt(3, "          \x04DON'T STOP"); }
+    once (this.beat >= 34 && this.division >= 2) { DisplayTextAllAt(4, "          \x1cGO \x04TO \x1cTHE CLUB"); }
+    once (this.beat >= 34 && this.division >= 3) { DisplayTextAllAt(4, "          \x1cGO \x04TO THE \x1cCLUB"); }
+    once (this.beat >= 35 && this.division >= 0) { DisplayTextAllAt(4, "          \x1cGO \x04TO THE CLUB"); }
+    once (this.beat >= 35 && this.division >= 2) { DisplayTextAllAt(4, "          \x04GO TO THE CLUB"); }
+    once (this.beat >= 36 && this.division >= 0) { DisplayTextAllAt(5, "          \x04GO \x1cTO THE CLUB"); }
+    once (this.beat >= 36 && this.division >= 2) { DisplayTextAllAt(5, "          \x04GO \x1cTO THE \x04CLUB"); }
+    once (this.beat >= 37 && this.division >= 0) { DisplayTextAllAt(5, "          \x04GO TO THE CLUB"); }
+    once (this.beat >= 37 && this.division >= 2) { DisplayTextAllAt(6, "          \x1cGO \x04TO THE \x1cCLUB"); }
+    once (this.beat >= 38 && this.division >= 0) { DisplayTextAllAt(6, "          \x1cGO \x04TO THE CLUB"); }
+    once (this.beat >= 38 && this.division >= 2) { DisplayTextAllAt(6, "          \x04GO TO THE CLUB"); }
+    once (this.beat >= 39 && this.division >= 0) { DisplayTextAllAt(7, "          \x1cGO \x04TO THE \x1cCLUB"); }
+    once (this.beat >= 39 && this.division >= 2) { DisplayTextAllAt(7, "          \x1cGO \x04TO THE CLUB"); }
+    once (this.beat >= 40 && this.division >= 0) { DisplayTextAllAt(3, "          \x04DON'T STOP"); }
+    once (this.beat >= 40 && this.division >= 0) { DisplayTextAllAt(7, "          \x04GO TO THE CLUB"); }
+    once (this.beat >= 40 && this.division >= 1) { DisplayTextAllAt(8, "          \x04GO"); }
+    once (this.beat >= 40 && this.division >= 2) { DisplayTextAllAt(9, "          \x04GO"); }
+    once (this.beat >= 40 && this.division >= 3) { DisplayTextAllAt(10, "          \x04GO"); }
+    once (this.beat >= 41 && this.division >= 0) { this.clearText(); }
+    once (this.beat >= 41 && this.division >= 2) { DisplayTextAllAt(4, "\x12\x04DON'T          "); }
+    once (this.beat >= 42 && this.division >= 0) { DisplayTextAllAt(5, "\x12\x04STOP          "); }
+    once (this.beat >= 42 && this.division >= 2) { DisplayTextAllAt(6, "\x12\x04TO \x1cTHE          "); }
+    once (this.beat >= 42 && this.division >= 3) { DisplayTextAllAt(6, "\x12\x04TO THE          "); }
+    once (this.beat >= 43 && this.division >= 0) { DisplayTextAllAt(7, "\x12\x04CLUB \x1cGO          "); }
+    once (this.beat >= 43 && this.division >= 2) { DisplayTextAllAt(7, "\x12\x04CLUB GO          "); }
+    once (this.beat >= 44 && this.division >= 2) { this.clearText(); }
+    once (this.beat >= 44 && this.division >= 2) { DisplayTextAllAt(6, "\x12\x04TO THE          "); }
+    once (this.beat >= 45 && this.division >= 0) { DisplayTextAllAt(4, "\x12\x04GO          "); }
+    once (this.beat >= 45 && this.division >= 1) { DisplayTextAllAt(5, "\x12\x04GO          "); }
+    once (this.beat >= 45 && this.division >= 2) { DisplayTextAllAt(6, "\x12\x04GO          "); }
+    once (this.beat >= 45 && this.division >= 3) { DisplayTextAllAt(7, "\x12\x04GO          "); }
+    once (this.beat >= 46 && this.division >= 0) { DisplayTextAllAt(4, "\x12\x04CLUB          "); }
+    once (this.beat >= 46 && this.division >= 2) { DisplayTextAllAt(5, "\x12\x04TO          "); }
+    once (this.beat >= 46 && this.division >= 3) { DisplayTextAllAt(6, "\x12\x04THE          "); }
+    once (this.beat >= 47 && this.division >= 0) { DisplayTextAllAt(7, "\x12\x04CLUB          "); }
+    once (this.beat >= 47 && this.division >= 2) { DisplayTextAllAt(4, "\x12\x04GO          "); }
+    once (this.beat >= 47 && this.division >= 2) { DisplayTextAllAt(5, "\x12\x04GO          "); }
+    once (this.beat >= 47 && this.division >= 2) { DisplayTextAllAt(6, "\x12\x04GO          "); }
+    once (this.beat >= 47 && this.division >= 2) { DisplayTextAllAt(7, "\x12\x04GO          "); }
+    once (this.beat >= 48 && this.division >= 0) { DisplayTextAllAt(0, "\x12\x04Map by: BoE_Freya          "); }
+    once (this.beat >= 48 && this.division >= 0) { DisplayTextAllAt(10, "\x12\x04BoE Productions          "); }
+    once (this.beat >= 49 && this.division >= 0) { this.clearText(); }
+  }
+};
